@@ -6,11 +6,13 @@ import 'package:pokedex/widgets/pokemon_stats/pokemon_stats.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokedex/widgets/types_chips/types_chips.dart';
 import 'package:pokedex/extension/extensions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PokemonDetails extends StatelessWidget {
-  const PokemonDetails({Key key, this.index, this.name}) : super(key: key);
+  PokemonDetails({Key key, this.index, this.name}) : super(key: key);
   final index;
   final String name;
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +114,28 @@ class PokemonDetails extends StatelessWidget {
     var response = await http.get("https://pokeapi.co/api/v2/pokemon/$index");
     var responseJson = jsonDecode(response.body);
     Pokemon pokemon = Pokemon.fromJson(responseJson);
-    print(pokemon.types[0]);
+    addToLastSeen(index);
+
     return pokemon;
+  }
+
+  Future addToLastSeen(String index) async {
+    final SharedPreferences prefs = await _prefs;
+
+    var lastSeen = prefs.getStringList('lastSeen');
+
+    if (lastSeen == null) {
+      lastSeen = [];
+    }
+
+    if (lastSeen.length >= 3) {
+      lastSeen.removeLast();
+      lastSeen.insert(0, index);
+    } else {
+      lastSeen.insert(0, index);
+    }
+    print(lastSeen);
+
+    await prefs.setStringList('lastSeen', lastSeen);
   }
 }

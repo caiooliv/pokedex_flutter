@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Stat extends StatelessWidget {
-  const Stat({Key key, this.type, this.value,this.pokemonType}) : super(key: key);
+  const Stat({Key key, this.type, this.value, this.pokemonType})
+      : super(key: key);
   final type;
   final value;
   final pokemonType;
@@ -59,12 +60,10 @@ class Stat extends StatelessWidget {
 
   double transformValue(value) {
     double transformedValue = ((value * 100) / 170) / 100;
-    print(transformedValue);
     return transformedValue;
   }
 
-
-   Color getColorByType(String type) {
+  Color getColorByType(String type) {
     switch (type) {
       case ('bug'):
         return Colors.lightGreen[800];
@@ -98,6 +97,8 @@ class Stat extends StatelessWidget {
         return Colors.pink;
       case ('water'):
         return Colors.blue;
+      default:
+        return Colors.brown[200];
     }
   }
 }

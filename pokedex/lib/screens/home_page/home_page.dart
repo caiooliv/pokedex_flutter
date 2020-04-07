@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/widgets/pokemon_card/pokemon_card.dart';
 import 'package:pokedex/screens/custom_search/custom_search.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -14,6 +15,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,16 +32,15 @@ class _HomePageState extends State<HomePage> {
                 foreground: Paint()
                   ..style = PaintingStyle.stroke
                   ..strokeWidth = 6
-                  ..color = Color.fromARGB (255, 60, 90, 166),
+                  ..color = Color.fromARGB(255, 60, 90, 166),
               ),
             ),
             Text(
               "Pokedex",
               style: TextStyle(
-                fontFamily: 'Pokemon',
-                fontSize: 35,
-                color: Color.fromARGB(255, 247 , 202, 19)
-              ),
+                  fontFamily: 'Pokemon',
+                  fontSize: 35,
+                  color: Color.fromARGB(255, 247, 202, 19)),
             ),
           ],
         ),
@@ -104,7 +106,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List> getPokemons() async {
-
     var response =
         await http.get("https://pokeapi.co/api/v2/pokemon?offset=0&limit=151");
 

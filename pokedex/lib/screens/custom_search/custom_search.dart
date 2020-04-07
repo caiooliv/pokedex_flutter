@@ -3,10 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokedex/model/pokemon_model.dart';
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:pokedex/widgets/last_seen_card/last_seen_card.dart';
 import 'package:pokedex/widgets/pokemon_card/pokemon_card.dart';
 
 class CustomSearch extends SearchDelegate {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   @override
   ThemeData appBarTheme(BuildContext context) {
     assert(context != null);
@@ -82,7 +86,6 @@ class CustomSearch extends SearchDelegate {
               Pokemon pokemon = Pokemon.fromJson(snapshot.data);
               return PokemonCard(
                 index: pokemon.id,
-                name: pokemon.name,
               );
             }
         }
@@ -93,8 +96,52 @@ class CustomSearch extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     if (query == '') {
-      //TODO: Criar pesquisar recentes
-      return Container();
+      return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Text(
+                  "Pesquisas recentes :",
+                  style: GoogleFonts.pressStart2P(
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: FutureBuilder(
+                  future: _getFavorites(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List lista = snapshot.data;
+
+                      return ListView.builder(
+                        itemCount: lista.length,
+                        itemBuilder: (context, index) {
+                          return LastSeenCard(
+                            index: lista[index],
+                          );
+                        },
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     } else {
       return FutureBuilder(
         future: getPokemon(query),
@@ -129,7 +176,6 @@ class CustomSearch extends SearchDelegate {
                 Pokemon pokemon = Pokemon.fromJson(snapshot.data);
                 return PokemonCard(
                   index: pokemon.id,
-                  name: pokemon.name,
                 );
               }
           }
@@ -139,19 +185,16 @@ class CustomSearch extends SearchDelegate {
   }
 
   Future getPokemon(String index) async {
-    if (index == '') {
-      var response =
-          await http.get("https://pokeapi.co/api/v2/pokemon/dummyText/");
-
-      var jsonReponse = jsonDecode(response.body);
-
-      return jsonReponse;
-    }
-
     var response = await http.get("https://pokeapi.co/api/v2/pokemon/$index/");
 
     var jsonReponse = jsonDecode(response.body);
 
     return jsonReponse;
+  }
+
+  Future<List> _getFavorites() async {
+    final SharedPreferences prefs = await _prefs;
+    final lastSeen = prefs.getStringList('lastSeen');
+    return lastSeen;
   }
 }
