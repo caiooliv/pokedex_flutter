@@ -134,7 +134,6 @@ class PokemonDetails extends StatelessWidget {
     } else {
       lastSeen.insert(0, index);
     }
-    print(lastSeen);
 
     await prefs.setStringList('lastSeen', lastSeen);
   }

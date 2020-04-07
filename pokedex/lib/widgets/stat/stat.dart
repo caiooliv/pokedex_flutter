@@ -97,6 +97,8 @@ class Stat extends StatelessWidget {
         return Colors.pink;
       case ('water'):
         return Colors.blue;
+      case ('steel'):
+        return Colors.teal[500];
       default:
         return Colors.brown[200];
     }

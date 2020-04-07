@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import "package:pokedex/extension/extensions.dart";
 
 class TypesChip extends StatelessWidget {
   const TypesChip({Key key, this.types}) : super(key: key);
@@ -20,9 +19,7 @@ class TypesChip extends StatelessWidget {
                 label: Text(
                   type['type']['name'],
                   style: GoogleFonts.pressStart2P(
-                    fontSize: 15,
-                    color: Colors.white
-                  ),
+                      fontSize: 15, color: Colors.white),
                 ),
                 backgroundColor: getColorByType(type['type']['name']),
               ),
@@ -66,6 +63,8 @@ class TypesChip extends StatelessWidget {
         return Colors.pink;
       case ('water'):
         return Colors.blue;
+      case ('steel'):
+        return Colors.teal[500];
       default:
         return Colors.brown[200];
     }
