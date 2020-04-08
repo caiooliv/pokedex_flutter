@@ -54,43 +54,63 @@ class CustomSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return FutureBuilder(
-      future: getPokemon(query),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case (ConnectionState.none):
-          case (ConnectionState.waiting):
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: new AlwaysStoppedAnimation<Color>(Colors.redAccent),
-              ),
-            );
-          default:
-            if (snapshot.hasError) {
+    if (query == '') {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.search,
+              size: 200,
+            ),
+            Text(
+              "Procure por index ou nome !",
+              style: GoogleFonts.pressStart2P(fontSize: 12),
+            )
+          ],
+        ),
+      );
+    } else {
+      return FutureBuilder(
+        future: getPokemon(query),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case (ConnectionState.none):
+            case (ConnectionState.waiting):
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.search,
-                      size: 200,
-                    ),
-                    Text(
-                      "Procure por index ou nome !",
-                      style: GoogleFonts.pressStart2P(fontSize: 12),
-                    )
-                  ],
+                child: CircularProgressIndicator(
+                  valueColor:
+                      new AlwaysStoppedAnimation<Color>(Colors.redAccent),
                 ),
               );
-            } else {
-              Pokemon pokemon = Pokemon.fromJson(snapshot.data);
-              return PokemonCard(
-                index: pokemon.id,
-              );
-            }
-        }
-      },
-    );
+            default:
+              if (snapshot.hasError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.search,
+                        size: 200,
+                      ),
+                      Text(
+                        "Procure por index ou nome !",
+                        style: GoogleFonts.pressStart2P(fontSize: 12),
+                      )
+                    ],
+                  ),
+                );
+              } else {
+                Pokemon pokemon = Pokemon.fromJson(snapshot.data);
+                return PokemonCard(
+                  index: pokemon.id,
+                  name: pokemon.name,
+                );
+              }
+          }
+        },
+      );
+    }
   }
 
   @override
@@ -123,7 +143,6 @@ class CustomSearch extends SearchDelegate {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       List lista = snapshot.data;
-
                       return ListView.builder(
                         itemCount: lista.length,
                         itemBuilder: (context, index) {
@@ -176,6 +195,7 @@ class CustomSearch extends SearchDelegate {
                 Pokemon pokemon = Pokemon.fromJson(snapshot.data);
                 return PokemonCard(
                   index: pokemon.id,
+                  name: pokemon.name,
                 );
               }
           }

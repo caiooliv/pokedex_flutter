@@ -15,67 +15,77 @@ class LastSeenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(future: getPokemon(index),builder: (context, snapshot) {
-      switch (snapshot.connectionState) {
-        case (ConnectionState.none):
-        case (ConnectionState.waiting):
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        default:
-          Pokemon pokemon = Pokemon.fromJson(snapshot.data);
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PokemonDetails(
-                          index: index,
-                          name: pokemon.name,
-                        )),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  border: Border.all(color: Colors.black, width: 1.5),
+    return FutureBuilder(
+        future: getPokemon(index),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case (ConnectionState.none):
+            case (ConnectionState.waiting):
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        new AlwaysStoppedAnimation<Color>(Colors.redAccent),
+                  ),
                 ),
-                height: 120,
-                child: Stack(
-                  children: <Widget>[
-                    Row(
+              );
+            default:
+              Pokemon pokemon = Pokemon.fromJson(snapshot.data);
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PokemonDetails(
+                              index: index,
+                              name: pokemon.name,
+                            )),
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      border: Border.all(color: Colors.black, width: 1.5),
+                    ),
+                    height: 120,
+                    child: Stack(
                       children: <Widget>[
-                        Image.network(
-                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index}.png"),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text("#$index",
-                              style: GoogleFonts.pressStart2P(fontSize: 15)),
+                        Row(
+                          children: <Widget>[
+                            Image.network(
+                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index}.png"),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text("#$index",
+                                  style:
+                                      GoogleFonts.pressStart2P(fontSize: 15)),
+                            ),
+                            Text(pokemon.name.capitalize(),
+                                style: GoogleFonts.pressStart2P(fontSize: 15)),
+                          ],
                         ),
-                        Text(pokemon.name.capitalize(),
-                            style: GoogleFonts.pressStart2P(fontSize: 15)),
+                        Positioned(
+                          width: 150,
+                          height: 150,
+                          left: 250,
+                          child: Opacity(
+                            opacity: 0.1,
+                            child: Image.network(
+                              "https://raw.githubusercontent.com/scitbiz/flutter_pokedex/master/assets/images/pokeball.png",
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                    Positioned(
-                      width: 150,
-                      height: 150,
-                      left: 250,
-                      child: Opacity(
-                        opacity: 0.1,
-                        child: Image.network(
-                          "https://raw.githubusercontent.com/scitbiz/flutter_pokedex/master/assets/images/pokeball.png",
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
-      }
-    });
+              );
+          }
+        });
   }
 
   Future getPokemon(String index) async {
